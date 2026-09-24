@@ -1,0 +1,3 @@
+[submodule "YAPG/YAPG"]
+	path = YAPG/YAPG
+	url = https://github.com/Alexis-Magnier/YetAnotherPlanetGenerator.git

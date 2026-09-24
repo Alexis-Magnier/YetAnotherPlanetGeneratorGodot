@@ -1,0 +1,22 @@
+[workspace]
+members = [
+    "godot",
+]
+resolver = "2"
+
+
+[workspace.dependencies]
+godot = "0.5.5"
+
+[workspace.features]
+nothreads = ["godot/experimental-wasm-nothreads"]
+editor-docs = ["godot/register-docs"]
+
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+panic = "abort"
+
+[profile.editor]
+inherits = "release"

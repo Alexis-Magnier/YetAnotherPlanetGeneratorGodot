@@ -1,0 +1,12 @@
+[configuration]
+entry_symbol = "gdext_rust_init"
+compatibility_minimum = 4.3
+reloadable = true
+
+[libraries]
+linux.debug.x86_64 =     "res://addons/YAPG/target/debug/libyapg_gd.so"
+linux.release.x86_64 =   "res://addons/YAPG/target/release/libyapg_gd.so"
+windows.debug.x86_64 =   "res://addons/YAPG/target/editor/yapg_gd.dll"
+windows.release.x86_64 = "res://addons/YAPG/target/release/yapg_gd.dll"
+macos.debug =            "res://addons/YAPG/target/editor/libyapg_gd.dylib"
+macos.release =          "res://addons/YAPG/target/release/libyapg_gd.dylib"
