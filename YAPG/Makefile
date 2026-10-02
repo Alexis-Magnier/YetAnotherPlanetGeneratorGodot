@@ -46,23 +46,23 @@ all: native
 ensure-toolchain:
 	rustup toolchain install $(NIGHTLY) --profile minimal --component rust-src
 
-native: native-editor native-release
+native: editor debug
 
 # Optimized (inherits release) with the in-editor API docs. 
-native-editor: | ensure-toolchain
+editor: | ensure-toolchain
 	$(CARGO) build --profile editor --features editor-docs
 	mkdir -p $(TARGET_DIR)/debug/
-	cp target/editor/$(LIBRARY) $(TARGET_DIR)/debug/
+	mv target/editor/$(LIBRARY) $(TARGET_DIR)/debug/
 	
-native-release: | ensure-toolchain
+release: | ensure-toolchain
 	$(CARGO) build --release
 	mkdir -p $(TARGET_DIR)/release/
-	cp target/release/$(LIBRARY) $(TARGET_DIR)/release/
+	mv target/release/$(LIBRARY) $(TARGET_DIR)/release/
 
-native-debug: | ensure-toolchain
-	$(CARGO) build --features
+debug: | ensure-toolchain
+	$(CARGO) build
 	mkdir -p $(TARGET_DIR)/debug/
-	cp target/debug/$(LIBRARY) $(TARGET_DIR)/debug/
+	mv target/debug/$(LIBRARY) $(TARGET_DIR)/debug/
 
 clean:
 	@rm -r target

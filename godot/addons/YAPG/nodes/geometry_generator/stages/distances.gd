@@ -1,0 +1,4 @@
+class_name YAPG_GeometryAssignDistancesStage
+extends __YAPG_Geometry_Generator_Component_Stage_Base
+
+var impl := __YAPG_Geometry_Generator_Distances_Impl.new()

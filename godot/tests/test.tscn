@@ -1,6 +1,65 @@
-[gd_scene format=3 uid="uid://wei8quc5ybdr"]
+[gd_scene format=3 uid="uid://d3pwlawpnkxgn"]
 
-[ext_resource type="Script" uid="uid://0nu20xs7rduw" path="res://tests/test.gd" id="1_yggfj"]
+[ext_resource type="Script" uid="uid://u33fe6qepmp" path="res://addons/YAPG/nodes/planet.gd" id="1_yggfj"]
+[ext_resource type="Script" uid="uid://e1rtsmqrmrs0" path="res://addons/YAPG/nodes/geometry_generator/component.gd" id="2_eig8f"]
+[ext_resource type="Script" uid="uid://dblklr75he2jx" path="res://addons/YAPG/nodes/geometry_generator/pipeline.gd" id="3_ry45r"]
+[ext_resource type="Script" uid="uid://cookx5br010ja" path="res://addons/YAPG/nodes/geometry_generator/stages/cell_generator.gd" id="4_dsb46"]
+[ext_resource type="Script" uid="uid://lh0gnex12x1k" path="res://addons/YAPG/nodes/geometry_generator/stages/plate_generator.gd" id="5_dsb46"]
+[ext_resource type="Script" uid="uid://lmqfb3yb3h1i" path="res://addons/YAPG/nodes/geometry_generator/stages/detect_collisions.gd" id="6_uofsi"]
+[ext_resource type="Script" uid="uid://boc05bmde81t8" path="res://addons/YAPG/nodes/geometry_generator/stages/distances.gd" id="7_vxaqg"]
+[ext_resource type="Script" uid="uid://c1r1epk5341df" path="res://addons/YAPG/nodes/geometry_generator/stages/base_properties.gd" id="8_x2dcf"]
+[ext_resource type="Script" uid="uid://cxvchmxxefj8l" path="res://addons/YAPG/nodes/geometry_generator/stages/temperature.gd" id="9_rj716"]
+[ext_resource type="Script" uid="uid://bojf4x8rpers4" path="res://addons/YAPG/nodes/geometry_generator/stages/strength.gd" id="10_qwp7r"]
+[ext_resource type="Script" uid="uid://b4gn0lkh777w6" path="res://addons/YAPG/nodes/geometry_generator/stages/stress.gd" id="11_72jlw"]
+[ext_resource type="Script" uid="uid://duhd8xqjnnfh2" path="res://addons/YAPG/nodes/geometry_generator/stages/isostasy.gd" id="12_nsppo"]
 
-[node name="Test" type="Node3D" unique_id=461817263]
+[sub_resource type="__YAPG_Geometry_Generator_Component_Stage_Base" id="__YAPG_Geometry_Generator_Component_Stage_Base_dsb46"]
+script = ExtResource("4_dsb46")
+metadata/_custom_type_script = "uid://cookx5br010ja"
+
+[sub_resource type="__YAPG_Geometry_Generator_Component_Stage_Base" id="__YAPG_Geometry_Generator_Component_Stage_Base_jenrn"]
+script = ExtResource("5_dsb46")
+metadata/_custom_type_script = "uid://lh0gnex12x1k"
+
+[sub_resource type="__YAPG_Geometry_Generator_Component_Stage_Base" id="__YAPG_Geometry_Generator_Component_Stage_Base_mm0ke"]
+script = ExtResource("6_uofsi")
+metadata/_custom_type_script = "uid://lmqfb3yb3h1i"
+
+[sub_resource type="__YAPG_Geometry_Generator_Component_Stage_Base" id="__YAPG_Geometry_Generator_Component_Stage_Base_tipe3"]
+script = ExtResource("7_vxaqg")
+
+[sub_resource type="__YAPG_Geometry_Generator_Component_Stage_Base" id="__YAPG_Geometry_Generator_Component_Stage_Base_ymr3d"]
+script = ExtResource("8_x2dcf")
+metadata/_custom_type_script = "uid://c1r1epk5341df"
+
+[sub_resource type="__YAPG_Geometry_Generator_Component_Stage_Base" id="__YAPG_Geometry_Generator_Component_Stage_Base_5fw7c"]
+script = ExtResource("9_rj716")
+metadata/_custom_type_script = "uid://cxvchmxxefj8l"
+
+[sub_resource type="__YAPG_Geometry_Generator_Component_Stage_Base" id="__YAPG_Geometry_Generator_Component_Stage_Base_7y2ik"]
+script = ExtResource("10_qwp7r")
+metadata/_custom_type_script = "uid://bojf4x8rpers4"
+
+[sub_resource type="__YAPG_Geometry_Generator_Component_Stage_Base" id="__YAPG_Geometry_Generator_Component_Stage_Base_vxaqg"]
+script = ExtResource("11_72jlw")
+metadata/_custom_type_script = "uid://b4gn0lkh777w6"
+
+[sub_resource type="__YAPG_Geometry_Generator_Component_Stage_Base" id="__YAPG_Geometry_Generator_Component_Stage_Base_x2dcf"]
+script = ExtResource("12_nsppo")
+metadata/_custom_type_script = "uid://duhd8xqjnnfh2"
+
+[sub_resource type="Resource" id="Resource_eig8f"]
+script = ExtResource("3_ry45r")
+stages = Array[__YAPG_Geometry_Generator_Component_Stage_Base]([SubResource("__YAPG_Geometry_Generator_Component_Stage_Base_dsb46"), SubResource("__YAPG_Geometry_Generator_Component_Stage_Base_jenrn"), SubResource("__YAPG_Geometry_Generator_Component_Stage_Base_mm0ke"), SubResource("__YAPG_Geometry_Generator_Component_Stage_Base_tipe3"), SubResource("__YAPG_Geometry_Generator_Component_Stage_Base_ymr3d"), SubResource("__YAPG_Geometry_Generator_Component_Stage_Base_5fw7c"), SubResource("__YAPG_Geometry_Generator_Component_Stage_Base_7y2ik"), SubResource("__YAPG_Geometry_Generator_Component_Stage_Base_vxaqg"), SubResource("__YAPG_Geometry_Generator_Component_Stage_Base_x2dcf")])
+metadata/_custom_type_script = "uid://dblklr75he2jx"
+
+[node name="Test" type="Node3D" unique_id=1471440599]
+
+[node name="Planet" type="Node3D" parent="." unique_id=877155250]
 script = ExtResource("1_yggfj")
+metadata/_custom_type_script = "uid://u33fe6qepmp"
+
+[node name="YAPG_GeometryGeneratorComponent" type="__YAPG_Planet_Component" parent="Planet" unique_id=2128723484]
+script = ExtResource("2_eig8f")
+pipeline = SubResource("Resource_eig8f")
+metadata/_custom_type_script = "uid://e1rtsmqrmrs0"
