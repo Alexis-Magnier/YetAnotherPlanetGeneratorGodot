@@ -1,37 +1,26 @@
 @tool
 class_name YAPG_Planet extends Node3D
 
-var _planet:__YAPG_Planet_Impl = null
+@export_tool_button("Generate") var _generate_button = generate
 
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	_planet = __YAPG_Planet_Impl.new()
-	_planet.hello_world()
+var _id: int = YAPGServer.INVALID_PLANET_ID
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
+func _enter_tree() -> void:
+	if _id == YAPGServer.INVALID_PLANET_ID:
+		_id = YAPGServer.create_planet()
 
-func _notification(what: int) -> void:
-	match what:
-		NOTIFICATION_CHILD_ORDER_CHANGED: update_configuration_warnings()
+func _exit_tree() -> void:
+	if _id != YAPGServer.INVALID_PLANET_ID:
+		YAPGServer.free_planet(_id)
+		_id = YAPGServer.INVALID_PLANET_ID
 
+func get_planet_id() -> int:
+	return _id
 
-## Checks if there are children and if they are all of correct type
-func _check_children(warnings: PackedStringArray) -> void:
-	var children = get_children()
+func generate():
+	assert(_id != YAPGServer.INVALID_PLANET_ID)
+	YAPGServer.generate_planet(_id, self)
 
-	if children: 
-		for node in children:
-			if node is YAPG_PlanetComponent: continue
-			warnings.append("Child '%s' is not a PlanetComponent" % node.name)
-	else:
-		warnings.append("The planet does not have any component")
-
-
-func _get_configuration_warnings() -> PackedStringArray:
-	var warnings := PackedStringArray()
-	
-	_check_children(warnings)
-	
-	return warnings
+func tick(dt:float):
+	assert(_id != YAPGServer.INVALID_PLANET_ID)
+	YAPGServer.tick_planet(_id, dt)

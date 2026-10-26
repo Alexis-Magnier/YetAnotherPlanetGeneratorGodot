@@ -3,11 +3,8 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "build-rust",
-            "command": "cargo",
-            "args": [
-                "build"
-            ],
+            "label": "build-editor",
+            "command": "make",
             "options": {
                 "cwd": "${workspaceFolder}/YAPG"
             }

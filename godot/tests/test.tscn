@@ -1,65 +1,89 @@
 [gd_scene format=3 uid="uid://d3pwlawpnkxgn"]
 
-[ext_resource type="Script" uid="uid://u33fe6qepmp" path="res://addons/YAPG/nodes/planet.gd" id="1_yggfj"]
-[ext_resource type="Script" uid="uid://e1rtsmqrmrs0" path="res://addons/YAPG/nodes/geometry_generator/component.gd" id="2_eig8f"]
-[ext_resource type="Script" uid="uid://dblklr75he2jx" path="res://addons/YAPG/nodes/geometry_generator/pipeline.gd" id="3_ry45r"]
-[ext_resource type="Script" uid="uid://cookx5br010ja" path="res://addons/YAPG/nodes/geometry_generator/stages/cell_generator.gd" id="4_dsb46"]
-[ext_resource type="Script" uid="uid://lh0gnex12x1k" path="res://addons/YAPG/nodes/geometry_generator/stages/plate_generator.gd" id="5_dsb46"]
-[ext_resource type="Script" uid="uid://lmqfb3yb3h1i" path="res://addons/YAPG/nodes/geometry_generator/stages/detect_collisions.gd" id="6_uofsi"]
-[ext_resource type="Script" uid="uid://boc05bmde81t8" path="res://addons/YAPG/nodes/geometry_generator/stages/distances.gd" id="7_vxaqg"]
-[ext_resource type="Script" uid="uid://c1r1epk5341df" path="res://addons/YAPG/nodes/geometry_generator/stages/base_properties.gd" id="8_x2dcf"]
-[ext_resource type="Script" uid="uid://cxvchmxxefj8l" path="res://addons/YAPG/nodes/geometry_generator/stages/temperature.gd" id="9_rj716"]
-[ext_resource type="Script" uid="uid://bojf4x8rpers4" path="res://addons/YAPG/nodes/geometry_generator/stages/strength.gd" id="10_qwp7r"]
-[ext_resource type="Script" uid="uid://b4gn0lkh777w6" path="res://addons/YAPG/nodes/geometry_generator/stages/stress.gd" id="11_72jlw"]
-[ext_resource type="Script" uid="uid://duhd8xqjnnfh2" path="res://addons/YAPG/nodes/geometry_generator/stages/isostasy.gd" id="12_nsppo"]
+[ext_resource type="Script" uid="uid://cxq6xrr0lmaeh" path="res://addons/YAPG/nodes/components/geometry_generator.gd" id="2_eig8f"]
+[ext_resource type="Script" uid="uid://djv4wb8lsumub" path="res://addons/YAPG/nodes/components/mesh_generator.gd" id="3_7517i"]
+[ext_resource type="YAPG_PlateMaterial" uid="uid://bb3drwuajin1h" path="res://addons/YAPG/nodes/components/plate materials/mafic.tres" id="3_ry45r"]
+[ext_resource type="YAPG_PlateMaterial" uid="uid://cmuvc4n0rsu4k" path="res://addons/YAPG/nodes/components/plate materials/felsic.tres" id="4_dsb46"]
 
-[sub_resource type="__YAPG_Geometry_Generator_Component_Stage_Base" id="__YAPG_Geometry_Generator_Component_Stage_Base_dsb46"]
-script = ExtResource("4_dsb46")
-metadata/_custom_type_script = "uid://cookx5br010ja"
+[sub_resource type="GDScript" id="GDScript_7517i"]
+script/source = "@tool
+extends YAPG_Planet
 
-[sub_resource type="__YAPG_Geometry_Generator_Component_Stage_Base" id="__YAPG_Geometry_Generator_Component_Stage_Base_jenrn"]
-script = ExtResource("5_dsb46")
-metadata/_custom_type_script = "uid://lh0gnex12x1k"
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	if !Engine.is_editor_hint():
+		self.generate()
+"
 
-[sub_resource type="__YAPG_Geometry_Generator_Component_Stage_Base" id="__YAPG_Geometry_Generator_Component_Stage_Base_mm0ke"]
-script = ExtResource("6_uofsi")
-metadata/_custom_type_script = "uid://lmqfb3yb3h1i"
+[sub_resource type="Shader" id="Shader_ry45r"]
+code = "shader_type spatial;
+render_mode unshaded;
 
-[sub_resource type="__YAPG_Geometry_Generator_Component_Stage_Base" id="__YAPG_Geometry_Generator_Component_Stage_Base_tipe3"]
-script = ExtResource("7_vxaqg")
+varying float height;
 
-[sub_resource type="__YAPG_Geometry_Generator_Component_Stage_Base" id="__YAPG_Geometry_Generator_Component_Stage_Base_ymr3d"]
-script = ExtResource("8_x2dcf")
-metadata/_custom_type_script = "uid://c1r1epk5341df"
+uniform float vertex_scale;
+uniform float scale;
+uniform float offset;
 
-[sub_resource type="__YAPG_Geometry_Generator_Component_Stage_Base" id="__YAPG_Geometry_Generator_Component_Stage_Base_5fw7c"]
-script = ExtResource("9_rj716")
-metadata/_custom_type_script = "uid://cxvchmxxefj8l"
+void vertex() {
+	height = CUSTOM0.x;
+	
+	VERTEX = VERTEX * (1.0 + height * vertex_scale);
+	// Called for every vertex the material is visible on.
+}
 
-[sub_resource type="__YAPG_Geometry_Generator_Component_Stage_Base" id="__YAPG_Geometry_Generator_Component_Stage_Base_7y2ik"]
-script = ExtResource("10_qwp7r")
-metadata/_custom_type_script = "uid://bojf4x8rpers4"
+vec3 getTerrainColor(float h) {
+    // h expected in range [-1.0, 1.0]
+    if (h < -0.6) return mix(vec3(0.008, 0.043, 0.149), vec3(0.043, 0.129, 0.290), (h + 1.0) / 0.4);
+    if (h < -0.2) return mix(vec3(0.043, 0.129, 0.290), vec3(0.122, 0.369, 0.549), (h + 0.6) / 0.4);
+    if (h <  0.0) return mix(vec3(0.122, 0.369, 0.549), vec3(0.851, 0.765, 0.510), (h + 0.2) / 0.2);
+    if (h <  0.1) return mix(vec3(0.851, 0.765, 0.510), vec3(0.322, 0.549, 0.220), h / 0.1);
+    if (h <  0.3) return mix(vec3(0.322, 0.549, 0.220), vec3(0.176, 0.349, 0.133), (h - 0.1) / 0.2);
+    if (h <  0.5) return mix(vec3(0.176, 0.349, 0.133), vec3(0.549, 0.451, 0.294), (h - 0.3) / 0.2);
+    if (h <  0.7) return mix(vec3(0.549, 0.451, 0.294), vec3(0.361, 0.322, 0.282), (h - 0.5) / 0.2);
+    if (h <  0.85) return mix(vec3(0.361, 0.322, 0.282), vec3(0.722, 0.698, 0.655), (h - 0.7) / 0.15);
+    return mix(vec3(0.722, 0.698, 0.655), vec3(1.0, 1.0, 1.0), (h - 0.85) / 0.15);
+}
 
-[sub_resource type="__YAPG_Geometry_Generator_Component_Stage_Base" id="__YAPG_Geometry_Generator_Component_Stage_Base_vxaqg"]
-script = ExtResource("11_72jlw")
-metadata/_custom_type_script = "uid://b4gn0lkh777w6"
+void fragment() {
+	vec3 color = getTerrainColor(height * scale - offset);
+	
+	ALBEDO = color;
+}"
 
-[sub_resource type="__YAPG_Geometry_Generator_Component_Stage_Base" id="__YAPG_Geometry_Generator_Component_Stage_Base_x2dcf"]
-script = ExtResource("12_nsppo")
-metadata/_custom_type_script = "uid://duhd8xqjnnfh2"
-
-[sub_resource type="Resource" id="Resource_eig8f"]
-script = ExtResource("3_ry45r")
-stages = Array[__YAPG_Geometry_Generator_Component_Stage_Base]([SubResource("__YAPG_Geometry_Generator_Component_Stage_Base_dsb46"), SubResource("__YAPG_Geometry_Generator_Component_Stage_Base_jenrn"), SubResource("__YAPG_Geometry_Generator_Component_Stage_Base_mm0ke"), SubResource("__YAPG_Geometry_Generator_Component_Stage_Base_tipe3"), SubResource("__YAPG_Geometry_Generator_Component_Stage_Base_ymr3d"), SubResource("__YAPG_Geometry_Generator_Component_Stage_Base_5fw7c"), SubResource("__YAPG_Geometry_Generator_Component_Stage_Base_7y2ik"), SubResource("__YAPG_Geometry_Generator_Component_Stage_Base_vxaqg"), SubResource("__YAPG_Geometry_Generator_Component_Stage_Base_x2dcf")])
-metadata/_custom_type_script = "uid://dblklr75he2jx"
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_7517i"]
+render_priority = 0
+shader = SubResource("Shader_ry45r")
+shader_parameter/vertex_scale = 0.595
+shader_parameter/scale = 10.0
+shader_parameter/offset = 0.56
 
 [node name="Test" type="Node3D" unique_id=1471440599]
 
 [node name="Planet" type="Node3D" parent="." unique_id=877155250]
-script = ExtResource("1_yggfj")
+script = SubResource("GDScript_7517i")
 metadata/_custom_type_script = "uid://u33fe6qepmp"
 
-[node name="YAPG_GeometryGeneratorComponent" type="__YAPG_Planet_Component" parent="Planet" unique_id=2128723484]
+[node name="MeshGenerator" type="Node" parent="Planet" unique_id=168456353]
+script = ExtResource("3_7517i")
+material = SubResource("ShaderMaterial_7517i")
+metadata/_custom_type_script = "uid://djv4wb8lsumub"
+
+[node name="GeometryGenerator" type="Node" parent="Planet" unique_id=1641985601]
 script = ExtResource("2_eig8f")
-pipeline = SubResource("Resource_eig8f")
-metadata/_custom_type_script = "uid://e1rtsmqrmrs0"
+cells_seed = 0
+cells_cell_count = 100000
+plates_seed = 50
+plates_priority_mean = 500.0
+plates_velocity_dev = 2.5
+plates_materials = Array[YAPG_PlateMaterial]([ExtResource("3_ry45r"), ExtResource("4_dsb46")])
+collision_other_subduction_height = 0.1
+stress_noise_frequency = 2.0
+stress_noise_amplitude = 0.1
+stress_noise_persistence = 0.5
+stress_noise_strength_weight = 1.0
+stress_noise_max = 5.0
+isostasy_phase_iterations = 48
+isostasy_mantle_density = 3.3
+isostasy_reference_thickness = 35.0
+metadata/_custom_type_script = "uid://cxq6xrr0lmaeh"

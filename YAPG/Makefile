@@ -10,16 +10,16 @@ NIGHTLY := nightly-2026-06-19
 
 # Shared flags. panic=abort (in Cargo.toml) handles EH; no -wasm-use-legacy-eh needed.
 RUSTFLAGS_COMMON := -C relocation-model=pic \
-                    -C link-args=-sSIDE_MODULE=2 \
-                    -C llvm-args=-enable-emscripten-cxx-exceptions=0 \
-                    -Z default-visibility=hidden \
-                    -Z link-native-libraries=no
+					-C link-args=-sSIDE_MODULE=2 \
+					-C llvm-args=-enable-emscripten-cxx-exceptions=0 \
+					-Z default-visibility=hidden \
+					-Z link-native-libraries=no
 
 # Threaded: + atomics, pthread, and --export=__heap_base (required on this nightly).
 RUSTFLAGS_THREADS := $(RUSTFLAGS_COMMON) \
-                     -C link-args=-pthread \
-                     -C target-feature=+atomics \
-                     -C link-arg=--export=__heap_base
+					 -C link-args=-pthread \
+					 -C target-feature=+atomics \
+					 -C link-arg=--export=__heap_base
 
 RUSTFLAGS_NOTHREADS := $(RUSTFLAGS_COMMON)
 
@@ -29,14 +29,14 @@ CARGO := cargo +$(NIGHTLY)
 # macOS:   libyapg_gd.dylib
 # Linux:   libyapg_gd.so
 ifeq ($(OS),Windows_NT)
-    LIBRARY := $(CRATE_NAME).dll
+	LIBRARY := $(CRATE_NAME).dll
 else
-    UNAME_S := $(shell uname -s)
-    ifeq ($(UNAME_S),Darwin)
-        LIBRARY := lib$(CRATE_NAME).dylib
-    else
-        LIBRARY := lib$(CRATE_NAME).so
-    endif
+	UNAME_S := $(shell uname -s)
+	ifeq ($(UNAME_S),Darwin)
+		LIBRARY := lib$(CRATE_NAME).dylib
+	else
+		LIBRARY := lib$(CRATE_NAME).so
+	endif
 endif
 
 .PHONY: all ensure-toolchain native native-editor native-release native-debug clean
@@ -52,17 +52,18 @@ native: editor debug
 editor: | ensure-toolchain
 	$(CARGO) build --profile editor --features editor-docs
 	mkdir -p $(TARGET_DIR)/debug/
-	mv target/editor/$(LIBRARY) $(TARGET_DIR)/debug/
+	cp --remove-destination target/editor/$(LIBRARY) $(TARGET_DIR)/debug/
 	
 release: | ensure-toolchain
 	$(CARGO) build --release
 	mkdir -p $(TARGET_DIR)/release/
-	mv target/release/$(LIBRARY) $(TARGET_DIR)/release/
+	cp --remove-destination target/release/$(LIBRARY) $(TARGET_DIR)/release/
 
 debug: | ensure-toolchain
 	$(CARGO) build
 	mkdir -p $(TARGET_DIR)/debug/
-	mv target/debug/$(LIBRARY) $(TARGET_DIR)/debug/
+	cp --remove-destination target/debug/$(LIBRARY) $(TARGET_DIR)/debug/
+# 	mv -f target/debug/$(LIBRARY) $(TARGET_DIR)/debug/
 
 clean:
 	@rm -r target
